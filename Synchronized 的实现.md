@@ -3,11 +3,13 @@ java中的synchronized关键字用来处理java中多线程同步的问题，既
 
 #### 两个指令
 ##### monitorenter 与 monitorexit
-首先对如下的代码进行编译，然后对生成的.class文件，执行指令`javap -verbose Test.class`，编译生成如下图所示的字节码。
+首先编译下面的java代码，然后对生成的.class文件，执行指令`javap -verbose Test.class`。产生如下图所示的字节码，能够看到一个`monitorenter`对应两个`monitorexit`指令。这里的两个monitorexit指令，是为了保证在任何状况下，锁都能够正常退出。所以实际上`monitorenter`与`monitorexit`是一对一的关系。这两个指令各自会消耗操作数栈上的一个引用类型的元素，作为加解锁的锁对象。也就是下面代码中的lock。
 
     public class Test {
-      public synchronized void test(Object lock) {
-            lock.hashCode();
+      public void test(Object lock) {
+            synchronized (lock) {
+                lock.hashCode();
+            }
         }
     }
 ![](https://github.com/WalkingNL/Pics/blob/master/synchronized.jpg)
